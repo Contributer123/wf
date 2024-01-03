@@ -1,0 +1,41 @@
+test
+
+
+<script>
+
+let myJsonObject = [
+    { 
+		name: "John Doe",
+		id : 125,
+		rating : 9
+	},
+	{ 
+		name: "John Joana",
+		id : 124,
+		rating : 2
+	}
+];
+
+
+// Read cookie 
+function read_cookie() {
+
+	let cookie_data = document.cookie.split(';');
+	return cookie_data;
+
+}
+
+// Write cookie
+function store_data(value) {
+
+let date = new Date();
+date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000)); // 365 days in milliseconds
+let expires = "expires=" + date.toUTCString();
+let encodedJsonString = encodeURIComponent(value);
+document.cookie = "myCookie=" + encodedJsonString + ";" + expires + ";path=/";
+
+}
+
+store_data(myJsonObject);
+console.log(read_cookie());
+</script>
