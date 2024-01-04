@@ -35,7 +35,93 @@ let encodedJsonString = encodeURIComponent(value);
 document.cookie = "myCookie=" + encodedJsonString + ";" + expires + ";path=/";
 
 }
+function ensemble_wof_url() {
 
-store_data(myJsonObject);
-console.log(read_cookie());
+let start_date = Math.round(new Date().getTime()/1000);
+let number_of_days = 7;
+
+
+let end_date = 24*3600*number_of_days+start_date;
+
+let multiLineString = `
+ https://widget.actinate.com/widgets/v1/classes/occurences?
+ startAt=${start_date}&
+ endAt=${end_date}&
+ studioIds[]=1&
+ timzoneForDayBuckets=GMT%2B01:00&
+ courseCategoryFilterEnabled=0&
+ courseTrainingGoalFilterEnabled=0&
+ tenantLevelFilterEnabled=0&
+ courseFilterEnabled=0&
+ tenant=wof`;
+ 
+  request_url = multiLineString.replace(/\n /g, "");
+ return request_url;
+}
+
+// Function to fetch JSON data
+function fetchJsonData(url) {
+    fetch(url)
+        .then(response => {
+            // Check if the response is ok (status code 200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Data is successfully received and converted to JSON
+            processData(data);
+        })
+        .catch(error => {
+            // Handle any errors
+            console.error('Fetch error:', error);
+        });
+}
+	let course_list = {}
+
+function processData(data) {
+	
+
+    //console.log("Data received:", data);
+	let number_of_days = data.days.data.length;
+	//weekday[new Date(data.days.data[0].day*1000).getDay()];
+	// We iterate over days i
+	for (let i=0; i < data.days.data.length; i++)
+	{
+		// We iterate over all occurences j
+		for (let j=0; j < data.days.data[i].occurences.length; j++)
+		{
+			//console.log(data.days.data[i].occurences[j]);
+			let employee_data = data.days.data[i].occurences[j].employees[0];
+			let name = employee_data.firstname + " " + employee_data.lastname;
+			
+			let course_data = {
+				course_name : data.days.data[i].occurences[j].course.name,
+				start_at : (new Date(data.days.data[i].occurences[j].start_at*1000)),
+				other : data.days.data[i].occurences[j]
+			}
+			
+			if(course_list[name] == null) course_list[name] = [];
+			course_list[name].push(course_data);
+			
+		}
+	}
+
+	//let occurance = 
+	let employee = data.days.data[0].occurences[0].employees[0];
+	let course_name = data.days.data[0].occurences[0].course.name;
+    // Process your data here
+	console.log(course_list)
+}
+
+
+//store_data(myJsonObject);
+//console.log(read_cookie());
+fetchJsonData(ensemble_wof_url());
+
+
+
+
+
 </script>
