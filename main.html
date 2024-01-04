@@ -1,4 +1,4 @@
-test
+test2
 
 
 <script>
@@ -113,6 +113,11 @@ function processData(data) {
 	let course_name = data.days.data[0].occurences[0].course.name;
     // Process your data here
 	console.log(course_list)
+	
+	// Print a list with all members, create sliders with them
+	for (const [key, value] of Object.entries(temp1)) {
+		document.body.innerHTML += `<div> <input type="range" min="0" max="10" value="0" step="1"> <label>${key}</label> </div>`
+	}
 }
 
 
